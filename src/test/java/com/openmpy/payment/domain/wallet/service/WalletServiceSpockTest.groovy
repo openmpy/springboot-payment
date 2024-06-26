@@ -22,7 +22,7 @@ class WalletServiceSpockTest extends Specification {
         given:
         def userId = 1L
         CreateWalletRequest request = new CreateWalletRequest(userId)
-        walletRepository.findByUserId(userId) >> Optional.empty()
+        walletRepository.findTopByUserId(userId) >> Optional.empty()
 
         when:
         def createdWallet = walletService.createWallet(request)
@@ -38,7 +38,7 @@ class WalletServiceSpockTest extends Specification {
         given:
         def userId = 1L
         CreateWalletRequest request = new CreateWalletRequest(userId)
-        walletRepository.findByUserId(userId) >> Optional.of(new Wallet(userId))
+        walletRepository.findTopByUserId(userId) >> Optional.of(new Wallet(userId))
 
         when:
         def createdWallet = walletService.createWallet(request)
@@ -54,7 +54,7 @@ class WalletServiceSpockTest extends Specification {
         def userId = 1L
         def wallet = new Wallet(userId)
         wallet.balance = new BigDecimal(1000)
-        walletRepository.findByUserId(userId) >> Optional.of(wallet)
+        walletRepository.findTopByUserId(userId) >> Optional.of(wallet)
 
         when:
         def result = walletService.findWalletByUserId(userId)
@@ -70,7 +70,7 @@ class WalletServiceSpockTest extends Specification {
         def userId = 1L
         def wallet = new Wallet(userId)
         wallet.balance = new BigDecimal(1000)
-        walletRepository.findByUserId(userId) >> Optional.empty()
+        walletRepository.findTopByUserId(userId) >> Optional.empty()
 
         when:
         def result = walletService.findWalletByUserId(userId)

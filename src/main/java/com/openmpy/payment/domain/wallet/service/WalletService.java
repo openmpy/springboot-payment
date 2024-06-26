@@ -20,7 +20,7 @@ public class WalletService {
     private final WalletRepository walletRepository;
 
     public CreateWalletResponse createWallet(CreateWalletRequest request) {
-        boolean isPresent = walletRepository.findByUserId(request.userId()).isPresent();
+        boolean isPresent = walletRepository.findTopByUserId(request.userId()).isPresent();
         if (isPresent) {
             throw new RuntimeException("지갑을 이미 가지고 있습니다.");
         }
@@ -37,7 +37,7 @@ public class WalletService {
     @Transactional(readOnly = true)
     public FindWalletResponse findWalletByUserId(Long userId) {
 
-        return walletRepository.findByUserId(userId)
+        return walletRepository.findTopByUserId(userId)
                 .map(wallet -> new FindWalletResponse(
                         wallet.getId(),
                         wallet.getUserId(),
