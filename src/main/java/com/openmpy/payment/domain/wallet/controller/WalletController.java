@@ -1,6 +1,8 @@
 package com.openmpy.payment.domain.wallet.controller;
 
-import com.openmpy.payment.domain.wallet.dto.*;
+import com.openmpy.payment.domain.wallet.dto.CreateWalletRequest;
+import com.openmpy.payment.domain.wallet.dto.CreateWalletResponse;
+import com.openmpy.payment.domain.wallet.dto.FindWalletResponse;
 import com.openmpy.payment.domain.wallet.service.WalletService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -23,12 +25,5 @@ public class WalletController {
             @PathVariable("userId") Long userId
     ) {
         return walletService.findWalletByUserId(userId);
-    }
-
-    @PostMapping("/api/v1/wallets/add-balance")
-    public AddBalanceWalletResponse addBalance(
-            @RequestBody AddBalanceWalletRequest request
-    ) {
-        return walletService.addBalance(request);
     }
 }

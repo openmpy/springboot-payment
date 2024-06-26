@@ -48,6 +48,20 @@ public class WalletService {
                 .orElse(null);
     }
 
+    @Transactional(readOnly = true)
+    public FindWalletResponse findWalletByWalletId(Long walletId) {
+
+        return walletRepository.findById(walletId)
+                .map(wallet -> new FindWalletResponse(
+                        wallet.getId(),
+                        wallet.getUserId(),
+                        wallet.getBalance(),
+                        wallet.getCreatedAt(),
+                        wallet.getUpdatedAt()
+                ))
+                .orElse(null);
+    }
+
     public AddBalanceWalletResponse addBalance(AddBalanceWalletRequest request) {
         Wallet wallet = walletRepository.findById(request.walletId()).orElseThrow(
                 () -> new RuntimeException("지갑이 없습니다.")
