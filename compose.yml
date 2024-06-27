@@ -13,3 +13,8 @@ services:
       - TZ=UTC
     volumes:
       - ./mysql/init:/docker-entrypoint-initdb.d
+  redis:
+    container_name: payment-redis
+    image: redis:latest
+    ports:
+      - 6379:6379
