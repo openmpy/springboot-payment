@@ -1,6 +1,5 @@
 package com.openmpy.payment.domain.wallet.service;
 
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -22,7 +21,7 @@ public class WalletLockerService {
         Lock lock = new Lock(generateKey(walletId), "contents");
 
         Boolean result = redisTemplate.opsForValue().setIfAbsent(
-                lock.getKey(),
+                lock.key(),
                 lock,
                 Duration.ofMillis(LOCK_TTL)
         );
@@ -39,16 +38,16 @@ public class WalletLockerService {
             return;
         }
 
-        redisTemplate.delete(lock.getKey());
+        redisTemplate.delete(lock.key());
     }
 
     private String generateKey(Long key) {
         return LOCK_PREFIX + key;
     }
 
-    @Data
-    public static class Lock {
-        private final String key;
-        private final String contents;
+    public record Lock(
+            String key,
+            String contents
+    ) {
     }
 }
