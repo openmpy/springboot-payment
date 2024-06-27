@@ -61,7 +61,7 @@ class TransactionServiceIntegrationTest {
     @Test
     void 충전을_동시에_실행한다() throws InterruptedException {
         Long userId = 200L;
-        String orderId = "orderId-2";
+        String orderId = "orderId-4";
 
         ChargeTransactionRequest request = new ChargeTransactionRequest(
                 userId, orderId, BigDecimal.TEN

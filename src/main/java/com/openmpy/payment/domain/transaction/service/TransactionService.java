@@ -23,14 +23,14 @@ public class TransactionService {
     private final TransactionRepository transactionRepository;
 
     public ChargeTransactionResponse charge(ChargeTransactionRequest request) {
-        if (transactionRepository.findTransactionByOrderId(request.orderId()).isPresent()) {
-            throw new RuntimeException("이미 충전된 거래입니다.");
-        }
-
         FindWalletResponse findWalletResponse = walletService.findWalletByUserId(request.userId());
 
         if (findWalletResponse == null) {
             throw new RuntimeException("사용자 지갑이 존재하지 않습니다.");
+        }
+
+        if (transactionRepository.findTransactionByOrderId(request.orderId()).isPresent()) {
+            throw new RuntimeException("이미 충전된 거래입니다.");
         }
 
         AddBalanceWalletResponse wallet = walletService.addBalance(new AddBalanceWalletRequest(
