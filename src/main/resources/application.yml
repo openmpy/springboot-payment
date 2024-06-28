@@ -3,6 +3,8 @@ spring:
     url: jdbc:mysql://localhost:3306/payment?serverTimezone=Asia/Seoul&useSSL=false
     username: suhwan
     password: 1234
+    hikari:
+      maximum-pool-size: 20
   jpa:
     show-sql: true
     hibernate:

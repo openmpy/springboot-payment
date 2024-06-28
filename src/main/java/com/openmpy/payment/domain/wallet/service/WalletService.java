@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Service
 public class WalletService {
 
-    private static final BigDecimal BALANCE_LIMIT = new BigDecimal(100_000);
+    private static final BigDecimal BALANCE_LIMIT = new BigDecimal(100_000_000_000L);
 
     private final WalletRepository walletRepository;
 
@@ -34,7 +34,6 @@ public class WalletService {
         );
     }
 
-    @Transactional(readOnly = true)
     public FindWalletResponse findWalletByUserId(Long userId) {
 
         return walletRepository.findTopByUserId(userId)
