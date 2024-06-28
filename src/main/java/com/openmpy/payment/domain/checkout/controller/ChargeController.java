@@ -65,7 +65,7 @@ public class ChargeController {
         order.setUpdatedAt(LocalDateTime.now());
         orderRepository.save(order);
 
-        paymentProcessingService.createCharge(request);
+        paymentProcessingService.createCharge(request, false);
 
         return ResponseEntity.ok(null);
     }
