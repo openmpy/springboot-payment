@@ -1,3 +1,18 @@
+### 테스트 환경
+
+VisualVM
+
+```
+-Xms1024m -Xmx1024m
+```
+
+- 비관적 락 O
+  <img width="1001" alt="스크린샷 2024-06-29 오전 1 46 03" src="https://github.com/openmpy/springboot-payment/assets/150704638/f7d43ccc-823b-4e00-aa22-ea50c859f2d5">
+- 비관적 락 X
+  <img width="1001" alt="스크린샷 2024-06-29 오전 1 47 34" src="https://github.com/openmpy/springboot-payment/assets/150704638/e3717bf8-ef0f-4578-a15d-8e1cbdc27a27">
+
+---
+
 1. findTransactionByOrderId 동시에 써질 때 의도대로 동작할까?
     - Transaction이라서 괜찮지 않나?
         - Transaction의 이해 부족
