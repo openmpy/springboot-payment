@@ -2,10 +2,7 @@ package com.openmpy.payment.domain.order.entity;
 
 import com.openmpy.payment.domain.order.entity.constants.Status;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -36,11 +33,13 @@ public class Order {
 
     private String courseName;
 
+    @Setter
     @Enumerated(EnumType.STRING)
     private Status status;
 
     private LocalDateTime createdAt;
 
+    @Setter
     private LocalDateTime updatedAt;
 
     @Builder

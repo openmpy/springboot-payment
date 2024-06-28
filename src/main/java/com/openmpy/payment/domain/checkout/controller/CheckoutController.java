@@ -1,25 +1,21 @@
 package com.openmpy.payment.domain.checkout.controller;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.openmpy.payment.domain.checkout.dto.ConfirmRequest;
+import com.openmpy.payment.domain.checkout.external.PaymentProcessingService;
 import com.openmpy.payment.domain.order.entity.Order;
 import com.openmpy.payment.domain.order.entity.constants.Status;
 import com.openmpy.payment.domain.order.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.client.RestClient;
 
 import java.math.BigDecimal;
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -27,6 +23,7 @@ import java.util.UUID;
 public class CheckoutController {
 
     private final OrderRepository orderRepository;
+    private final PaymentProcessingService paymentProcessingService;
 
     @GetMapping("/order")
     public String order(
@@ -59,9 +56,9 @@ public class CheckoutController {
         return "/checkout.html";
     }
 
-    @GetMapping("/success")
-    public String success() {
-        return "/success.html";
+    @GetMapping("/order-requested")
+    public String orderRequested() {
+        return "/order-requested.html";
     }
 
     @GetMapping("/fail")
@@ -69,32 +66,17 @@ public class CheckoutController {
         return "/fail.html";
     }
 
-    @RequestMapping(value = "/confirm")
-    public ResponseEntity<Object> confirmPayment(@RequestBody String jsonBody) throws Exception {
-        JsonNode jsonNode = new ObjectMapper().readTree(jsonBody);
-        ConfirmRequest request = new ConfirmRequest(
-                jsonNode.get("paymentKey").asText(),
-                jsonNode.get("orderId").asText(),
-                jsonNode.get("amount").asText()
-        );
+    @PostMapping("/confirm")
+    public ResponseEntity<Object> confirmPayment(@RequestBody ConfirmRequest confirmRequest) {
+        Order order = orderRepository.findByRequestId(confirmRequest.orderId())
+                .orElse(null);
 
-        String widgetSecretKey = "test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6";
-        Base64.Encoder encoder = Base64.getEncoder();
-        byte[] encodedBytes = encoder.encode((widgetSecretKey + ":").getBytes(StandardCharsets.UTF_8));
-        String authorizations = "Basic " + new String(encodedBytes);
+        order.setStatus(Status.REQUESTED);
+        order.setUpdatedAt(LocalDateTime.now());
+        orderRepository.save(order);
 
-        RestClient defaultClient = RestClient.create();
-        Object object = defaultClient.post()
-                .uri("https://api.tosspayments.com/v1/payments/confirm")
-                .headers(httpHeaders -> {
-                    httpHeaders.set("Authorization", authorizations);
-                    httpHeaders.set("Content-Type", "application/json");
-                })
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(request)
-                .retrieve()
-                .toEntity(Object.class);
+        paymentProcessingService.createPayment(confirmRequest);
 
-        return ResponseEntity.ok(object);
+        return ResponseEntity.ok(null);
     }
 }
