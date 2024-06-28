@@ -2,12 +2,17 @@ package com.openmpy.payment.domain.checkout.external;
 
 import com.openmpy.payment.domain.checkout.dto.ConfirmRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.client.ClientHttpRequestFactories;
+import org.springframework.boot.web.client.ClientHttpRequestFactorySettings;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.Base64;
 
 @RequiredArgsConstructor
@@ -16,14 +21,22 @@ public class PaymentGatewayService {
 
     private static final Base64.Encoder ENCODER = Base64.getEncoder();
     private static final String SECRET_KEY = "test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6";
-    private static final String URL = "https://api.tosspayments.com/v1/payments/confirm";
+
+    @Value("${pg.url}")
+    public String URL;
 
     public void confirm(ConfirmRequest request) {
         String widgetSecretKey = SECRET_KEY;
         byte[] encodedBytes = ENCODER.encode((widgetSecretKey + ":").getBytes(StandardCharsets.UTF_8));
         String authorizations = "Basic " + new String(encodedBytes);
 
-        RestClient defaultClient = RestClient.create();
+        ClientHttpRequestFactorySettings settings = ClientHttpRequestFactorySettings.DEFAULTS
+                .withReadTimeout(Duration.ofSeconds(3));
+        ClientHttpRequestFactory factory = ClientHttpRequestFactories.get(settings);
+        RestClient defaultClient = RestClient.builder()
+                .requestFactory(factory)
+                .build();
+
         ResponseEntity<Object> object = defaultClient.post()
                 .uri(URL)
                 .headers(httpHeaders -> {

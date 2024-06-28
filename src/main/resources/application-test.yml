@@ -12,4 +12,4 @@ spring:
         format_sql: true
     open-in-view: false
 pg:
-  url: https://api.tosspayments.com/v1/payments/confirm
+  url: https://ecf786e3-8d6a-4c12-bf43-65507c2abaa3.mock.pstmn.io/confirm
